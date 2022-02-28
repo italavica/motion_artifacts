@@ -1,6 +1,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
-from functions import discard_empty_records, histogram, plot,remove_DC,extract_signal_freq
+from functions import discard_empty_records, histogram, plot,remove_DC,extract_signal_freq,check_pulses_freq
 from tqdm import tqdm
 import numpy as np
 
@@ -23,7 +23,8 @@ f.close()
 #     plt.ylabel('Amplitude')
 #     plt.show()
 
-path=records_list_updated[0]
+#path=records_list_updated[0]
+path=records_list_updated[100]
 path= str.rstrip(path)
 df = pd.read_csv (path)
 signal= df.loc[:,'Green[raw]']
@@ -37,6 +38,22 @@ for segment in tqdm(segments):
     i+=1
     f=extract_signal_freq(segment)
     print('fundamental frequency =',f)
+    f=np.array(f)
+    if len(f)>1:
+        label=0
+    elif  f>= 0.0133 and f<= 0.03:
+        f_std=check_pulses_freq(segment)
+        print(f_std)
+        print(f_std > float(0))
+        if f_std > float(0.008):
+            label=0
+        elif f_std<=float(0.008):
+            label=1
+    else:
+        label=0
+
+
+    print("label=", label)
     plt.figure()
     plt.plot(segment)
     plt.title('# '+str(i)+' PPG segment')

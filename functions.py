@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 from tqdm import tqdm
+from scipy import stats
 
 def load_rawsignal(address,sampling_rate):
 #def load_rawsignal(address,sampling_rate):
@@ -90,6 +91,23 @@ def extract_signal_freq(x):
       if abs(coef)==max(abs(w)):
         f.append(freq)
   return f
+
+def check_pulses_freq(segment):
+  L=len(segment)
+  n=L/41.6
+  pulses=np.array_split(segment, n)
+  freqs=[]
+  for pulse in pulses:
+    f=extract_signal_freq(pulse)
+    # if len(f)!=1:
+    f=np.average(f)
+    freqs.append(f)
+  print(freqs)
+  f_std=np.std(freqs)
+  f_std=abs(f_std)
+  return f_std
+   
+#def perfusion_index(segment):
 
 
 
